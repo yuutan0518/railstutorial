@@ -32,3 +32,17 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
+
+workers Integer(ENV['WEB_Concurrency'] || 2)
+threads_count = Integer(ENV['RAILS_MAX_THREADS'])
+threads threads_count, threads_count
+
+preload_app!
+
+rackup DefaultRackup
+port ENV['PORT'] || 3000
+environment ENV['RACK_ENV'] || 'deveropment'
+
+on worker_boot do
+  ActiveRecorde::Base.establish_connection
+end
