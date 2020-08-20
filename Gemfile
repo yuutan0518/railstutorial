@@ -6,7 +6,7 @@ ruby '2.4.10'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.3'
 
-gem 'bootstrap-sass', '3.3.7'
+gem 'bootstrap-sass', '3.4.1'
 
 gem 'faker', '1.7.3'
 gem 'will_paginate', '3.1.7'
