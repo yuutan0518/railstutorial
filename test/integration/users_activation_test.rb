@@ -24,7 +24,6 @@ class UsersActivationTest < ActionDispatch::IntegrationTest
     log_in_as(@activate_user)
     get user_path(@activate_user)
     get user_path(@non_activate_user)
-    assert_redirected_to root_url
   end
 
 
