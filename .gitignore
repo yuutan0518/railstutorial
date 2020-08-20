@@ -32,3 +32,6 @@
 
 /config/certs/*
 !/config/certs/.keep
+
+# アップロードされたテスト画像を無視する
+/public/uploads
