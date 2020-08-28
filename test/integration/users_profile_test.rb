@@ -21,4 +21,10 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "profile following and follower" do
+    get user_path(@user)
+    assert_match @user.active_relationships.count.to_s, response.body
+    assert_match @user.passive_relationships.count.to_s, response.body
+  end
+
 end

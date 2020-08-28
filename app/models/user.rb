@@ -1,7 +1,23 @@
 class User < ApplicationRecord
   # マイクロポストはその所有者と一緒に破棄
   has_many :microposts, dependent: :destroy
+
+  # 能動的関係 1対多　ユーザが削除された場合、リレーションシップも削除
+  has_many :active_relationships, class_name:  "Relationship",
+                                  foreign_key: "follower_id",
+                                  dependent:   :destroy
   
+  # follower
+  has_many :passive_relationships, class_name: "Relationship",
+  foreign_key: "followed_id",
+  dependent: :destroy
+
+  # followingの関連付け追加
+  has_many :following, through: :active_relationships, source: :followed
+  
+  # followersの関連付け
+  has_many :followers, through: :passive_relationships, source: :follower
+
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save :downcase_email
   before_create :create_activation_digest
@@ -77,7 +93,23 @@ class User < ApplicationRecord
 
   # フィード（投稿一覧表示）
   def feed
-    Micropost.where("user_id = ?", id)
+    following_ids = "SELECT followed_id FROM relationships WHERE follower_id = :user_id"
+    Micropost.where("user_id IN (#{following_ids}) OR user_id = :user_id", user_id: id)
+  end
+
+  # ユーザをフォローする
+  def follow(other_user)
+    following << other_user
+  end
+
+  # ユーザフォロー解除
+  def unfollow(other_user)
+    active_relationships.find_by(followed_id: other_user.id).destroy
+  end
+
+  # 現在のユーザがフォローしていたらtrueを返す
+  def following?(other_user)
+    following.include?(other_user)
   end
 
   private
